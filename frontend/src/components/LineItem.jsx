@@ -4,7 +4,7 @@ import { FaTrash } from 'react-icons/fa';
 export default function LineItem(item, delItem) {
   
   function delItem() {
-    // console.log(item.id)
+    // console.log(item)
     axios.delete(`http://localhost:8000/api/items/${item.id}`)
     .then(res => console.log(res.data)
     )

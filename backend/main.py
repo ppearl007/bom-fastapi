@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from model import Item
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from database import (fetch_all_items, fetch_one_item, create_item, delete_item)
+from database import (fetch_all_items, fetch_one_item, create_item, delete_one_item)
 
 app = FastAPI()
 
@@ -22,29 +22,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# start with dummy data that uses template
-
-db: List[Item] = [
-    Item(
-        id = 1,
-        PN = "92558A310",
-        Desc = "Screw"
-    ),
-    Item(
-        id = 2,
-        PN = "8117A52",
-        Desc = "Clear Tape"
-    )
-]
-
-# item1 = {
-#     "id": 1,
-#     "PN": "310-001010",
-#     "Desc": "FG Box"
-# }
-
-# itemsList.append(item1)
-
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -55,11 +32,10 @@ async def root():
 
 @app.get("/api/items", response_model=List[Item])
 async def get_item():
-    # return db
     response = await fetch_all_items()
     if response:
         return response
-    raise HTTPException(404, "Something went wrong}")
+    raise HTTPException(404, "DB empty or Something went wrong}")
 
 
 # @app.get("/api/items/{id}")
@@ -69,7 +45,7 @@ async def get_item():
 #             return item
 
 @app.get("/api/items/{id}", response_model=Item)
-async def get_item_by_id(id: str):
+async def get_item_by_id(id: int):
     response = await fetch_one_item(id)
     if response:
         return response
@@ -106,14 +82,11 @@ async def post_item(item: Item):
 #         if (item.id == id):
 #             db.remove(item)
 #             return db
-    
-
-# @app.delete("/api/items/{id}")
-# async def delete_item(id: str):
-#     response = await delete_item(id)
-#     if (response.deleted_count == 1):
-#         return JSONResponse(content=f"item {id} deleted")
-#     raise HTTPException(status_code=404, detail=f"Item {id} not found")
 
 
-
+@app.delete("/api/items/{id}")
+async def delete_item(id: int):
+    response = await delete_one_item(id)
+    if (response.deleted_count == 1):
+        return JSONResponse(content=f"item {id} deleted")
+    raise HTTPException(status_code=404, detail=f"Item {id} not found")

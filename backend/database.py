@@ -26,7 +26,7 @@ async def create_item(item):
     result = await collection.insert_one(document)
     return result
 
-async def delete_item(id):
-    result = await collection.delete_one({"_id": ObjectId(id)})
+#using id generated from frontend instead of Mongo ObjID(_id) helps avoid issues
+async def delete_one_item(id):
+    result = await collection.delete_one({"id": id}) 
     return result
-

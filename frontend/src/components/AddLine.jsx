@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function AddLine() {
 
@@ -10,8 +11,8 @@ export default function AddLine() {
     // Post or add a line item
     const addItemHandler = () => {
         axios.post('http://localhost:8000/api/items', {
-            "id": Math.floor(Math.random() * 10000),
-            // "id": 1,
+            "id": Math.floor(Math.random() * 100000),
+            // "id": uuidv4(),
             "PN": PN,
             "Desc": Des,
             "Qty": Qty

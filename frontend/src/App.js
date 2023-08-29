@@ -8,6 +8,7 @@ import AddLine from './components/AddLine'
 
 function App() {
   const [allItems, setAllItems] = useState([])
+  // const [error, setError] = useState(undefined)
   // const [fieldRate, setFieldRate] = useState('')
   // const [fieldTotal, setFieldTotal] = useState('')
 
@@ -18,8 +19,12 @@ function App() {
     axios.get('http://localhost:8000/api/items')
     .then(res => {
       setAllItems(res.data)
-    })
+    }).catch(error =>
+      console.log(error.toJSON())
+    )
   })
+
+  if (!allItems) return null;
 
   return (
     <div className='App list-group container'>
