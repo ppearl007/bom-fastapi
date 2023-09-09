@@ -61,7 +61,7 @@ async def post_item(item: Item):
     item = jsonable_encoder(item)
     response = await create_item(item)
     if response:
-        return JSONResponse(content=f"{response.inserted_id} was created")
+        return JSONResponse(content=f"new item with id {response.inserted_id} was created")
     raise HTTPException(404, "Something went wrong")
 
 # @app.put("/api/items/{id}",response_model=Item)
