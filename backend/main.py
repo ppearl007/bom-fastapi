@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from model import Item
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from database import (fetch_all_items, fetch_one_item, create_item, delete_one_item)
+from database import (fetch_all_items, fetch_one_item, create_item, delete_one_item, change_item)
 
 app = FastAPI()
 
@@ -64,17 +64,14 @@ async def post_item(item: Item):
         return JSONResponse(content=f"new item with id {response.inserted_id} was created")
     raise HTTPException(404, "Something went wrong")
 
-# @app.put("/api/items/{id}",response_model=Item)
-# async def put_item(id: str, data: Item):
-#     for item in db:
-#         if (item.id == id):
-#             db[item.id-1] = data
-#             # db = list(map(lambda x: x.replace(item, data), db)) ??
-#             return db
-#     raise HTTPException(
-#         status_code=404,
-#         detail=f"user with id: {id} does not exist"
-#     )
+@app.put("/api/items/{id}", response_model=Item) #// add response_description="Update an item"
+async def update_item(id: int, item: Item):
+    item = jsonable_encoder(item)
+    response = await change_item(id, item)
+    if response:
+        return JSONResponse(content=f"item with id: {id} was successfully updated")
+    raise HTTPException(404, f"item with id: {id} does not exist or Something went wrong")
+
     
 # @app.delete("/api/items/{id}")
 # async def delete_item(id: int):

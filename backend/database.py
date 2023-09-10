@@ -30,3 +30,26 @@ async def create_item(item):
 async def delete_one_item(id):
     result = await collection.delete_one({"id": id}) 
     return result
+
+#use id generated from frontend instead of Mongo ObjID(_id) helps avoid issues
+async def change_item(id, item):
+    document = jsonable_encoder(item)
+    # result = await collection.update_one({'id': id}, {'$set': document})
+    # return result
+    print (document)
+    if len(document) >= 1:
+        updated_result = await collection.update_one({"id": id}, {"$set": document})
+        # print(updated_result.matched_count)
+        # return updated_result
+
+        if updated_result.modified_count == 1:
+            if (updated_result := await collection.find_one({"id": id})) is not None:
+                return updated_result
+
+
+    # old_doc = await collection.find_one({"id": id})
+    # print(old_doc['_id'])
+    # _id = old_doc['_id']
+    # result = await collection.replace_one({'_id': _id}, document)
+    # new_document = await collection.find_one({'_id': _id})
+    # return new_document
