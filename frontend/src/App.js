@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import AddLine from './components/AddLine'
-// import Uploader from './components/Uploader'
+import Uploader from './components/Uploader'
 import { Table, Space, Modal, Input, Button } from 'antd';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import { SearchOutlined } from '@ant-design/icons';
@@ -17,6 +17,8 @@ function App() {
   const [filteredInfo, setFilteredInfo] = useState({});
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
+  const [loadTable, setLoadTable] = useState(false);
+
   const searchInput = useRef(null);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -148,7 +150,7 @@ function App() {
       key: 'Actions',
       render: (_, item) => (
         <Space size="middle">
-          <a><FaEdit onClick={() => {editHandler(item)}} /> </a>
+          <a><FaEdit onClick={() => { editHandler(item) }} /> </a>
           <FaTrash onClick={() => { delItem(item) }} />
         </Space>
       )
@@ -169,7 +171,7 @@ function App() {
       }).catch(error =>
         console.log(error.toJSON())
       )
-  }, [allItems])
+  }, [])
 
   const delItem = (item) => {
     // console.log(item)
@@ -178,13 +180,13 @@ function App() {
       )
   }
 
-  const editHandler = (item) =>  {
+  const editHandler = (item) => {
     setisEditing(true)
     setItemEditing(item)
   }
 
   const updateItem = () => {
-    console.log (itemEditing)
+    console.log(itemEditing)
     axios.put(`http://localhost:8000/api/items/${itemEditing.id}`, itemEditing)
       .then(res => console.log(res.data)
       )
@@ -213,13 +215,19 @@ function App() {
       </div>
       <AddLine />
       <Modal title="Edit Item" open={isEditing} onCancel={() => setisEditing(false)} onOk={updateItem}>
-        <p>PN</p> <Input value={itemEditing?.PN} placeholder={itemEditing?.PN} onChange={e => setItemEditing(prev => {return {...prev, PN: e.target.value}})}/> 
+        <p>PN</p> <Input value={itemEditing?.PN} placeholder={itemEditing?.PN} onChange={e => setItemEditing(prev => { return { ...prev, PN: e.target.value } })} />
         {/* <p>PN</p> <Input value={itemEditing?.PN} placeholder={itemEditing?.PN} onChange={e => setItemEditing( {PN: e.target.value)}/>  */}
-        <p>Desc</p> <Input value={itemEditing?.Desc} placeholder={itemEditing?.Desc} onChange={e => setItemEditing(prev => {return {...prev, Desc: e.target.value}})}/> 
-        <p>Qty</p> <Input value={itemEditing?.Qty} placeholder={itemEditing?.PN} onChange={e => setItemEditing(prev => {return {...prev, Qty: e.target.value}})}/> 
+        <p>Desc</p> <Input value={itemEditing?.Desc} placeholder={itemEditing?.Desc} onChange={e => setItemEditing(prev => { return { ...prev, Desc: e.target.value } })} />
+        <p>Qty</p> <Input value={itemEditing?.Qty} placeholder={itemEditing?.PN} onChange={e => setItemEditing(prev => { return { ...prev, Qty: e.target.value } })} />
       </Modal>
 
-      {/* <Uploader /> */}
+      <Button
+        type="primary"
+        onClick={() => setLoadTable(!loadTable)}
+        size="big"
+      >Show table
+      </Button>
+        {loadTable && <Uploader />}
 
     </div>
   );
